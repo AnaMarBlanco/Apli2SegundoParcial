@@ -1,4 +1,5 @@
 using Apli2SegundoParcial.Data;
+using Blazored.Toast;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
@@ -27,6 +28,7 @@ namespace Apli2SegundoParcial
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+            services.AddBlazoredToast();
             services.AddServerSideBlazor();
             services.AddSingleton<WeatherForecastService>();
         }

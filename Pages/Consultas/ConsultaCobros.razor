@@ -1,0 +1,49 @@
+﻿@page "/consultacobros"
+@using Apli2SegundoParcial.BLL
+@using Apli2SegundoParcial.Models
+<h3>ConsultaCobros</h3>
+@if (Lista == null)
+{
+    <p> <em> Cargando ... </em> </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>CobroId</th>
+                <th>Fecha</th>
+                <th>ClienteId</th>
+                <th>Totales</th>
+                <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var listar in Lista)
+            {
+                <tr>
+                    <td>@listar.CobroId</td>
+                    <td>@listar.Fecha</td>
+                    <td>@listar.ClienteId</td>
+                    <td>@listar.Totales</td>
+                    <td>@listar.Observaciones</td>
+
+
+                </tr>
+            }
+        </tbody>
+
+
+    </table>
+}
+
+
+
+@code {
+    List<Cobros> Lista = new List<Cobros>();
+
+    protected override void OnInitialized()
+    {
+        Lista = CobrosBLL.GetList(p => true);
+    }
+}

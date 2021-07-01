@@ -1,0 +1,166 @@
+﻿@using Apli2SegundoParcial.Models
+@using Apli2SegundoParcial.BLL
+@page "/registrocobros"
+@inject IToastService Toast
+
+<h3>Registro Cobros</h3>
+
+
+<div class="container-fluid">
+    <EditForm Model="cobro" OnInvalidSubmit="Guardar">
+        <div class="form-group">
+            <label>Id</label>
+            <div class="input-group">
+
+                <InputNumber @bind-Value="cobro.CobroId" class="form-control" />
+                <div class="input-group-append">
+                    <button type="button" class="btn btn-primary" @onclick="Buscar">Buscar</button>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Fecha</label>
+            <InputDate @bind-Value="cobro.Fecha" class="form-control" />
+        </div>
+        <div class="form-group">
+            <div class="form-inline">
+                <label>Cliente </label>
+                <select class="form-control" @bind="cobro.ClienteId">
+                    @foreach (var item in lista)
+                    {
+                        <option value="@item.ClienteId">@item.Nombres</option>
+                    }
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="form-inline">
+                <label>Totales</label>
+                <InputNumber @bind-Value="cobro.Totales" class="form-control float-right" />
+            </div>
+        </div>
+        <div class="container-fluid">
+            <h4>Cobros Pendientes</h4>
+            <div class="form-group">
+                @if (cobro.Detalle == null || cobro.Detalle.Count <= 0)
+                {
+                    <span>...</span>
+                }
+                else
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Fecha</th>
+                                <th>Monto</th>
+                                <th>Balance</th>
+                                <th>Cobrado</th>
+                                <th>Pagar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in cobro.Detalle)
+                            {
+                                <tr>
+                                    <td>@item.Id</td>
+                                    <td>@item.Fecha</td>
+                                    <td>@item.Monto</td>
+                                    <td>@item.Balance</td>
+                                    <td>@item.Cobrado</td>
+                                    <td>@item.Pagar</td>
+                                </tr>
+                            }
+
+
+
+                        </tbody>
+
+                    </table>
+                }
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Observacion</label>
+            <InputTextArea @bind-Value="cobro.Observaciones" class="form-control" />
+        </div>
+
+        <div class="form-group">
+            <div class=btn-toolbar>
+                <button type="button" class="btn btn-primary">Limpiar</button>
+                <button type="submit" class="btn btn-success">Guardar</button>
+                <button type="button" class="btn btn-danger">Eliminar</button>
+
+            </div>
+        </div>
+
+
+
+    </EditForm>
+</div>
+
+@code {
+    Cobros cobro = new Cobros();
+    List<Clientes> lista = CobrosBLL.GetClientes();
+    public void Nuevo()
+    {
+        Limpiar();
+    }
+    public void Limpiar()
+    {
+        cobro = new Cobros();
+    }
+    public void Guardar()
+    {
+        if (cobro.Detalle.Count > 0)
+        {
+
+            bool guardo = CobrosBLL.Guardar(cobro);
+
+            if (guardo)
+            {
+                Toast.ShowSuccess("Guardado");
+
+
+            }
+            else
+                Toast.ShowError("Error al Guardar");
+        }
+        else
+        {
+            Toast.ShowWarning("Error al Guardar");
+        }
+    }
+    public void Buscar()
+    {
+        var busqueda = CobrosBLL.Buscar(cobro.CobroId);
+
+        if (busqueda != null)
+        {
+            this.cobro = cobro;
+        }
+        else
+        {
+            Toast.ShowWarning("No se encontro.");
+            Nuevo();
+        }
+    }
+    public void Eliminar()
+    {
+        bool paso;
+
+        paso = CobrosBLL.Eliminar(cobro.CobroId);
+
+        if (paso)
+        {
+            Nuevo();
+            Toast.ShowSuccess("Registro Eliminad");
+        }
+        else
+            Toast.ShowError("No fue posible Eliminar");
+        return;
+    }
+
+}
